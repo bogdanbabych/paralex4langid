@@ -1,0 +1,87 @@
+'''
+Created on 5 Apr 2019
+
+@author: bogdan
+'''
+
+import sys, os, re
+from collections import defaultdict
+
+
+class clUniqNGrams(object):
+    '''
+    input: two corpora in two languages
+    output: two tables of N-grams sorted by length, shortest to longest: which N-grams are unique and most frequent...
+        purpose: for cleaning Ukrainian corpus from Russian segments / texts, etc.
+    '''
+
+
+    def __init__(self, FInput1, FInput2):
+        '''
+        Constructor
+        '''
+        sys.stderr.write('init\n')
+                
+        DNgrams1 = self.file2ngramdicts(FInput1)
+        DNgrams2 = self.file2ngramdicts(FInput2)
+        
+        # sys.stdout.write('\n')
+        self.printDifference(DNgrams1, DNgrams2) # print only uniq for source language
+        # self.printDifference(DNgrams2, DNgrams1)
+        
+
+        return
+    
+    def printDifference(self, DNgrams1, DNgrams2):
+        for (SNGram, ILen) in sorted (DNgrams1.keys(), key=lambda x: x[1]):
+            if (SNGram, ILen) not in DNgrams2.keys():
+                sys.stdout.write(SNGram + '\n')
+        
+    
+    
+    def string2ngrams(self, SLine, LINgramSizes = [1,2]):
+        """
+        processing each string, creating a list of character n-grams
+        """
+        LNGrams = []
+        # for IPosition, SCharacter in enumerate():
+        for IPosition in range( len(SLine) ):
+            for IEl in LINgramSizes: # for each N-gram length
+                try:
+                    SNGram = SLine[IPosition : (IPosition + IEl - 1)]
+                    LNGrams.append(SNGram)
+                except:
+                    # sys.stderr.write('index error\n')
+                    continue
+        return LNGrams
+
+    
+    def file2ngramdicts(self, FInput):
+        DNGrams = defaultdict(int)
+        i = 0
+        for SLine in FInput:
+            i+=1; 
+            SLine = SLine.rstrip()
+            if i % 1000 == 0: sys.stderr.write('string: %(i)d : %(SLine)s \n' % locals())
+            
+            
+            
+            LNGrams = self.string2ngrams(SLine, [1,2,3,4])
+            for SNGram in LNGrams:
+                ILenNGram = len(SNGram)
+                DNGrams[(SNGram, ILenNGram)] += 1
+            
+        
+        
+        
+        
+        return DNGrams
+    
+    
+if __name__ == '__main__':
+    SFInput1 = sys.argv[1]; FInput1 = open(SFInput1, 'rU')
+    SFInput2 = sys.argv[2]; FInput2 = open(SFInput2, 'rU')
+    
+    OUniqNGrams = clUniqNGrams(FInput1, FInput2)
+    
+        

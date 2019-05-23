@@ -1,0 +1,9 @@
+
+Clean UK & Ru corpus is used to build contrastive sets of N-grams
+    the project performs a langauge identification task via a method of unique N-grams, starting from minimal up to maximal length...
+    >> experiments on cleaning corpora...
+    
+    - corpus to be taken from the Moses development project
+    
+    
+    
